@@ -1,0 +1,49 @@
+
+# This is a template makefile generated		by rpcgen 
+
+# Parameters 
+
+CLIENT = ftprpc_client
+SERVER = ftprpc_server
+
+SOURCES_CLNT.c = funciones.c comandos.c
+SOURCES_CLNT.h = miftprpcc.h
+SOURCES_SVC.c = 
+SOURCES_SVC.h =  miftprpcs.h
+SOURCES.x = ftprpc.x
+
+TARGETS_SVC.c = ftprpc_svc.c ftprpc_server.c ftprpc_xdr.c 
+TARGETS_CLNT.c = ftprpc_clnt.c ftprpc_client.c ftprpc_xdr.c 
+TARGETS = ftprpc.h ftprpc_xdr.c ftprpc_clnt.c ftprpc_svc.c ftprpc_client.c ftprpc_server.c
+
+OBJECTS_CLNT = $(SOURCES_CLNT.c:%.c=%.o) $(TARGETS_CLNT.c:%.c=%.o) 
+OBJECTS_SVC = $(SOURCES_SVC.c:%.c=%.o) $(TARGETS_SVC.c:%.c=%.o) 
+# Compiler flags 
+
+CFLAGS += -g 
+LDLIBS += -lnsl
+RPCGENFLAGS = 
+
+# Targets 
+
+all : $(CLIENT) $(SERVER)
+
+$(TARGETS) : $(SOURCES.x) 
+	rpcgen $(RPCGENFLAGS) $(SOURCES.x)
+
+$(OBJECTS_CLNT) : $(SOURCES_CLNT.c) $(SOURCES_CLNT.h) $(TARGETS_CLNT.c) 
+
+$(OBJECTS_SVC) : $(SOURCES_SVC.c) $(SOURCES_SVC.h) $(TARGETS_SVC.c) 
+
+$(CLIENT) : $(OBJECTS_CLNT) 
+	$(LINK.c) -o $(CLIENT) $(OBJECTS_CLNT) $(LDLIBS) 
+
+$(SERVER) : $(OBJECTS_SVC) 
+	$(LINK.c) -o $(SERVER) $(OBJECTS_SVC) $(LDLIBS)
+
+limpiar:
+	$(RM) core $(TARGETS) $(OBJECTS_CLNT) $(OBJECTS_SVC) $(CLIENT) $(SERVER)
+clean:
+	\rm *.o
+	\rm $(CLIENT)
+	\rm $(SERVER)
